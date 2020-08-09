@@ -1,0 +1,40 @@
+.field {
+  position: relative;
+  border: 1px solid #dbdbdb;
+  border-radius: 4px;
+  overflow: hidden;
+
+  &__label {
+    display: flex;
+    flex-direction: column;
+
+    &-name {
+      position: absolute;
+      top: 50%;
+      left: 10px;
+      transform: translateY(-50%);
+      color: #8e8e8e;
+      cursor: text;
+      transition: 0.15s;
+    }
+  }
+
+  &__input {
+    padding: 10px;
+    border: 0;
+    background-color: #fafafa;
+
+    &:focus,
+    &:valid + {
+      .field__label-name {
+        top: 0;
+        transform: translate(0);
+        font-size: 12px;
+      }
+    }
+
+    &:valid {
+      padding: 15px 10px 5px 10px;
+    }
+  }
+}
