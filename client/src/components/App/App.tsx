@@ -1,8 +1,13 @@
-import React from 'react';
+import React, { FC } from 'react';
+import { Route, Switch } from 'react-router-dom';
 
-import './App.scss';
 import { Auth } from '../../pages/Auth/Auth';
 
-export const App = () => {
-  return <Auth />;
-};
+import './App.scss';
+
+export const App: FC = () => (
+  <Switch>
+    <Route path="/login" component={Auth} />
+    <Route path="/register" component={Auth} />
+  </Switch>
+);

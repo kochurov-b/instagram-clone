@@ -1,4 +1,4 @@
-.auth-page {
+.auth {
   width: 100vw;
   height: 100vh;
   display: flex;
@@ -6,11 +6,30 @@
   justify-content: center;
   align-items: center;
 
-  &__container {
+  &__content {
     width: 350px;
     background-color: #ffffff;
     padding: 20px 30px;
     border: 1px solid #dbdbdb;
+  }
+
+  &__helper {
+    text-align: center;
+    background-color: #ffffff;
+    padding: 20px 30px;
+    border: 1px solid #dbdbdb;
+    margin-top: 10px;
+
+    &-text {
+      margin: 0;
+      font-size: 14px;
+    }
+
+    &-link {
+      font-weight: 600;
+      color: #0095f6;
+      text-decoration: none;
+    }
   }
 
   &__logo {
