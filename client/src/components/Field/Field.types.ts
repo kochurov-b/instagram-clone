@@ -1,6 +1,7 @@
 export interface IField {
   label: string;
   name: string;
+  type?: string;
   disabled?: boolean;
   required?: boolean;
 }

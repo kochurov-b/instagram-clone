@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, memo } from 'react';
 
 import { TOnChange, IFormField } from './Field.types';
 
@@ -9,17 +9,15 @@ interface IProps extends IFormField {
   onChange: TOnChange;
 }
 
-export const Field: FC<IProps> = ({
-  label,
-  value,
-  type = 'text',
-  disabled = false,
-  required = false,
-  onChange,
-}) => {
-  const customLabel = required ? `${label} *` : label;
-
-  return (
+export const Field: FC<IProps> = memo(
+  ({
+    label,
+    value,
+    type = 'text',
+    disabled = false,
+    required = false,
+    onChange,
+  }) => (
     <div className="field">
       <label className="field__label">
         <input
@@ -30,8 +28,8 @@ export const Field: FC<IProps> = ({
           value={value}
           onChange={({ target: { value } }) => onChange(value)}
         />
-        <span className="field__label-name">{customLabel}</span>
+        <span className="field__label-name">{label}</span>
       </label>
     </div>
-  );
-};
+  ),
+);
