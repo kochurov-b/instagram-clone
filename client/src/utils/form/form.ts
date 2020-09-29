@@ -2,7 +2,10 @@ import { IField } from '../../components/Field/Field.types';
 
 export const generateForm = <K>(fields: IField[]): K =>
   fields.reduce(
-    (acc, { label, name, type, required = false, disabled = false }) => ({
+    (
+      acc,
+      { label, name, type = 'text', required = false, disabled = false },
+    ) => ({
       ...acc,
       [name]: {
         label,

@@ -14,6 +14,7 @@ import './Auth.style.scss';
 interface ICommonProps {
   form: IForm;
   submitButtonTitle: string;
+  isSubmitButtonDisable: boolean;
   onChange: TOnChange<IForm>;
   onSubmit: TOnSubmit;
 }
@@ -35,12 +36,23 @@ type TRenderField = (
 
 const MemoLink = memo(Link);
 
-const renderField: TRenderField = (field, onChange) => (
-  <Field
-    {...field}
-    onChange={(value) => onChange(value, field.name as keyof IForm)}
-  />
-);
+const renderField: TRenderField = (field, onChange) => {
+  const { name, required } = field;
+
+  return (
+    <Field
+      key={name}
+      {...field}
+      onChange={(value) =>
+        onChange({
+          value,
+          required: required as boolean,
+          name: field.name as keyof IForm,
+        })
+      }
+    />
+  );
+};
 
 const renderFields: TRenderFields = (form, onChange) =>
   Object.values(form).map((field) => renderField(field, onChange));
@@ -48,18 +60,21 @@ const renderFields: TRenderFields = (form, onChange) =>
 const renderContent: TRenderContent = ({
   form,
   submitButtonTitle,
+  isSubmitButtonDisable,
   onChange,
   onSubmit,
 }) => (
-  <header className="auth__content">
+  <div className="auth__content">
     <div className="auth__logo">
       <img src={Logo} alt="instagram-clone" className="auth__logo-img" />
     </div>
     <form className="auth__form" onSubmit={onSubmit} noValidate>
       {renderFields(form, onChange)}
-      <Button type={EButtonType.Submit}>{submitButtonTitle}</Button>
+      <Button type={EButtonType.Submit} disabled={isSubmitButtonDisable}>
+        {submitButtonTitle}
+      </Button>
     </form>
-  </header>
+  </div>
 );
 
 const renderHelper: TRenderHelper = (text, link) => (

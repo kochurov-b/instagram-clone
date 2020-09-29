@@ -1,9 +1,10 @@
 import React, { FC, useEffect, useState } from 'react';
-import { useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
 
 import { IField } from '../../components/Field/Field.types';
+import { generateError } from '../../utils/form/errors/errors';
 import { generateForm } from '../../utils/form/form';
+import { TOnChange as TOnChangeForm } from '../../utils/form/form.types';
 
 import { AuthLayout } from './Auth.layout';
 import { EForm, IForm, IHelper, TOnSubmit } from './Auth.types';
@@ -49,41 +50,46 @@ interface IAuthHelper {
   register: IHelper;
 }
 
+type TIsSubmitButtonDisable = (form: IForm) => boolean;
+
+type TGenerateFormFields = (isRegister: boolean) => IField[];
+
+const generateFormFields: TGenerateFormFields = (isRegister) =>
+  isRegister ? [...REGISTER_FIELDS, ...COMMON_FIELDS] : COMMON_FIELDS;
+
+const isSubmitButtonDisable: TIsSubmitButtonDisable = (form) =>
+  Object.values(form).some(
+    ({ value, required, error }) =>
+      error.length !== 0 || (required && value.length === 0),
+  );
+
 export const Auth: FC = () => {
   const {
     location: { pathname },
   } = useHistory();
-  const initialForm = generateForm<IForm>(COMMON_FIELDS);
-  const [form, setForm] = useState<IForm>(initialForm);
   const isRegister = REGISTER_ROUTE_REG.test(pathname);
+  const initialForm = generateForm<IForm>(generateFormFields(isRegister));
+  const [form, setForm] = useState<IForm>(initialForm);
   const helper = isRegister ? AUTH_HELPER.register : AUTH_HELPER.login;
   const submitButtonTitle = isRegister ? 'Sign up' : 'Log in';
 
   useEffect(() => {
-    setForm((prevState: IForm) => {
-      if (isRegister)
-        return { ...generateForm<IForm>(REGISTER_FIELDS), ...prevState };
-
-      const { full_name, email, ...form } = prevState;
-
-      return form;
-    });
+    setForm(() => generateForm<IForm>(generateFormFields(isRegister)));
   }, [isRegister]);
 
-  const handleChange = useCallback((value: string, name: keyof IForm) => {
+  const handleChange: TOnChangeForm<IForm> = ({ name, value, required }) =>
     setForm((prevState) => ({
       ...prevState,
       [name]: {
         ...prevState[name],
         value,
+        error: generateError({ name, value, required }),
       },
     }));
-  }, []);
 
   const handleSubmit: TOnSubmit = (e) => {
     e.preventDefault();
 
-    console.log(form);
     fetch('/api/auth/login', {
       method: 'POST',
       headers: {
@@ -100,6 +106,7 @@ export const Auth: FC = () => {
     <AuthLayout
       form={form}
       helper={helper}
+      isSubmitButtonDisable={isSubmitButtonDisable(form)}
       submitButtonTitle={submitButtonTitle}
       onChange={handleChange}
       onSubmit={handleSubmit}
