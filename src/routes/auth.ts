@@ -4,13 +4,19 @@ import jwt from 'jsonwebtoken';
 import { check, validationResult } from 'express-validator';
 
 import { User } from '../models/User';
-import { generateJsonBody } from './helpers/generateJsonBody.helpers';
-import { EStatusCode } from './helpers/helpers.types';
+import { generateJsonBody } from './helpers/jsonBody.helper';
+import { EFormMessage, EStatusCode } from './helpers/helpers.types';
 import { config } from '../config/config';
-import { generateErrors } from './helpers/errors/errors';
-import { errorMessage } from './helpers/errors/errors.types';
+import { generateErrors } from './helpers/error.helper';
 
 export const router = Router();
+
+enum EAuthMessage {
+  UserCreated = 'user_created',
+  UserNotFound = 'user_not_found',
+  UserAlreadyExist = 'user_already_exist',
+  InvalidLoginOrPassword = 'invalid_login_or_password',
+}
 
 enum EFormFields {
   Email = 'email',
@@ -48,7 +54,7 @@ router.post(
       if (!validationErrors.isEmpty())
         return res.status(EStatusCode.BadRequest).json(
           generateJsonBody({
-            message: errorMessage.InvalidLoginOrPassword,
+            message: EAuthMessage.InvalidLoginOrPassword,
           }),
         );
 
@@ -56,7 +62,7 @@ router.post(
       if (!user)
         return res.status(EStatusCode.BadRequest).json(
           generateJsonBody({
-            message: errorMessage.UserNotFound,
+            message: EAuthMessage.UserNotFound,
           }),
         );
 
@@ -73,7 +79,7 @@ router.post(
           )
         : res.status(EStatusCode.BadRequest).json(
             generateJsonBody({
-              message: errorMessage.InvalidLoginOrPassword,
+              message: EAuthMessage.InvalidLoginOrPassword,
             }),
           );
     } catch (error) {
@@ -89,10 +95,10 @@ router.post(
 router.post(
   '/register',
   [
-    check(EFormFields.Email, errorMessage.FieldNotEmpty).notEmpty(),
-    check(EFormFields.FullName, errorMessage.FieldNotEmpty).notEmpty(),
-    check(EFormFields.Login, errorMessage.FieldNotEmpty).notEmpty(),
-    check(EFormFields.Password, errorMessage.MinPassword).isLength({ min: 6 }),
+    check(EFormFields.Email, EFormMessage.FieldNotEmpty).notEmpty(),
+    check(EFormFields.FullName, EFormMessage.FieldNotEmpty).notEmpty(),
+    check(EFormFields.Login, EFormMessage.FieldNotEmpty).notEmpty(),
+    check(EFormFields.Password, EFormMessage.MinPassword).isLength({ min: 6 }),
   ],
   async (req: Request, res: Response) => {
     try {
@@ -111,7 +117,7 @@ router.post(
       if (user) {
         return res.status(EStatusCode.BadRequest).json(
           generateJsonBody({
-            message: errorMessage.UserAlreadyExist,
+            message: EAuthMessage.UserAlreadyExist,
           }),
         );
       }
@@ -128,7 +134,7 @@ router.post(
 
       return res.status(EStatusCode.Created).json(
         generateJsonBody({
-          message: errorMessage.UserCreated,
+          message: EAuthMessage.UserCreated,
           params: {
             token: generateJwtToken(login, jwtSecretKey),
           },

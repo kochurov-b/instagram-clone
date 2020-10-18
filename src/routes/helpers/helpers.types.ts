@@ -4,3 +4,12 @@ export enum EStatusCode {
   BadRequest = 400,
   InternalServerError = 500,
 }
+
+export enum EFormMessage {
+  FieldNotEmpty = 'not_be_empty',
+  MinPassword = 'min_length_6',
+}
+
+export enum ECommonMessage {
+  SomethingWontWrong = 'something_wont_wrong',
+}
