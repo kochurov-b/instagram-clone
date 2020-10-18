@@ -1,7 +1,9 @@
 import React, { FC, useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 
 import { IField } from '../../components/Field/Field.types';
+import { loginThunk } from '../../store/Auth/Auth.middleware';
 import { generateError } from '../../utils/form/errors/errors';
 import { generateForm } from '../../utils/form/form';
 import { TOnChange as TOnChangeForm } from '../../utils/form/form.types';
@@ -72,6 +74,7 @@ export const Auth: FC = () => {
   const [form, setForm] = useState<IForm>(initialForm);
   const helper = isRegister ? AUTH_HELPER.register : AUTH_HELPER.login;
   const submitButtonTitle = isRegister ? 'Sign up' : 'Log in';
+  const dispatch = useDispatch();
 
   useEffect(() => {
     setForm(() => generateForm<IForm>(generateFormFields(isRegister)));
@@ -87,19 +90,14 @@ export const Auth: FC = () => {
       },
     }));
 
-  const handleSubmit: TOnSubmit = (e) => {
+  const handleSubmit: TOnSubmit = async (e) => {
     e.preventDefault();
+    const {
+      user_name: { value: userNameValue },
+      password: { value: passwordValue },
+    } = form;
 
-    fetch('/api/auth/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        login: form.user_name.value,
-        password: form.password.value,
-      }),
-    });
+    dispatch(loginThunk(userNameValue, passwordValue));
   };
 
   return (
