@@ -12,10 +12,10 @@ import { generateErrors } from './helpers/error.helper';
 export const router = Router();
 
 enum EAuthMessage {
-  UserCreated = 'user_created',
-  UserNotFound = 'user_not_found',
-  UserAlreadyExist = 'user_already_exist',
-  InvalidLoginOrPassword = 'invalid_login_or_password',
+  UserCreated = 'User created',
+  UserNotFound = 'User not found',
+  UserAlreadyExist = 'User already exist',
+  InvalidLoginOrPassword = 'Invalid login or password',
 }
 
 enum EFormFields {
@@ -63,6 +63,10 @@ router.post(
         return res.status(EStatusCode.BadRequest).json(
           generateJsonBody({
             message: EAuthMessage.UserNotFound,
+            error: {
+              name: EAuthMessage.UserNotFound,
+              message: EAuthMessage.UserNotFound,
+            },
           }),
         );
 
@@ -80,12 +84,17 @@ router.post(
         : res.status(EStatusCode.BadRequest).json(
             generateJsonBody({
               message: EAuthMessage.InvalidLoginOrPassword,
+              error: {
+                name: EAuthMessage.InvalidLoginOrPassword,
+                message: EAuthMessage.InvalidLoginOrPassword,
+              },
             }),
           );
     } catch (error) {
       res.status(EStatusCode.InternalServerError).json(
         generateJsonBody({
-          message: error.message,
+          message: error._message,
+          error,
         }),
       );
     }
@@ -98,7 +107,7 @@ router.post(
     check(EFormFields.Email, EFormMessage.FieldNotEmpty).notEmpty(),
     check(EFormFields.FullName, EFormMessage.FieldNotEmpty).notEmpty(),
     check(EFormFields.Login, EFormMessage.FieldNotEmpty).notEmpty(),
-    check(EFormFields.Password, EFormMessage.MinPassword).isLength({ min: 6 }),
+    check(EFormFields.Password, EFormMessage.FieldNotEmpty).notEmpty(),
   ],
   async (req: Request, res: Response) => {
     try {
@@ -109,7 +118,8 @@ router.post(
       if (!validationErrors.isEmpty()) {
         return res.status(EStatusCode.BadRequest).json(
           generateJsonBody({
-            errors: generateErrors(validationErrors),
+            message: EFormMessage.IncorrectData,
+            error: generateErrors(validationErrors),
           }),
         );
       }
@@ -130,6 +140,7 @@ router.post(
         login,
         password: hashPassword,
       });
+
       await userNew.save();
 
       return res.status(EStatusCode.Created).json(
@@ -143,7 +154,8 @@ router.post(
     } catch (error) {
       res.status(EStatusCode.InternalServerError).json(
         generateJsonBody({
-          message: error.message,
+          message: error._message,
+          error,
         }),
       );
     }

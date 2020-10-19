@@ -6,10 +6,11 @@ export enum EStatusCode {
 }
 
 export enum EFormMessage {
-  FieldNotEmpty = 'not_be_empty',
-  MinPassword = 'min_length_6',
+  FieldNotEmpty = 'The field cannot be empty',
+  MinPassword = 'Minimum password length 6 characters',
+  IncorrectData = 'Incorrect data entered',
 }
 
 export enum ECommonMessage {
-  SomethingWontWrong = 'something_wont_wrong',
+  SomethingWontWrong = 'Something wont wrong',
 }

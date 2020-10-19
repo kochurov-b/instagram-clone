@@ -7,17 +7,17 @@ interface IJsonBody {
   data?: any[];
   message?: string;
   params?: Object;
-  errors?: IError[];
+  error?: Error | IError[];
 }
 
 export const generateJsonBody = ({
   data = [],
   message = '',
   params = {},
-  errors = [],
+  error = new Error(),
 }: IJsonBody): IJsonBody => ({
   data,
   message,
   params,
-  errors,
+  error,
 });
