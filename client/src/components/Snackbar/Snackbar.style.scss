@@ -1,0 +1,76 @@
+$error-color: #f44336;
+$warning-color: #ff9800;
+$info-color: #2196f3;
+$success-color: #4caf50;
+$button-close-hover: rgba(0, 0, 0, 0.04);
+
+.snackbar {
+  position: absolute;
+  bottom: -70px;
+  right: 50%;
+  transform: translateX(50%);
+  width: auto;
+  background-color: $success-color;
+  border-radius: 4px;
+  padding: 16px;
+  opacity: 0;
+  transition: 0.3s;
+  display: flex;
+  align-items: center;
+
+  &--visible {
+    bottom: 24px;
+    opacity: 1;
+  }
+
+  &--error {
+    background-color: $error-color;
+  }
+
+  &--warning {
+    background-color: $warning-color;
+  }
+
+  &--info {
+    background-color: $info-color;
+  }
+
+  &--success {
+    background-color: $success-color;
+  }
+
+  &__message {
+    font-weight: 600;
+    color: white;
+    margin: 0;
+  }
+
+  &__close {
+    position: relative;
+    background-color: transparent;
+    border: 0;
+    width: 16px;
+    height: 16px;
+    padding: 14px 16px;
+    margin-left: 8px;
+    border-radius: 50%;
+    transition: 0.25s;
+    cursor: pointer;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: url('../../assets/images/sprite.png') no-repeat -406px -61px;
+      background-size: 440px 411px;
+      width: 16px;
+      height: 16px;
+    }
+
+    &:hover {
+      background-color: $button-close-hover;
+    }
+  }
+}

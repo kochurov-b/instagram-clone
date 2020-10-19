@@ -10,5 +10,5 @@ type TAuthConstants = {
 };
 
 export const authConstants: TAuthConstants = {
-  LOGIN: generateLoadStatusAction(EAuth.Login),
+  [EAuth.Login]: generateLoadStatusAction(EAuth.Login),
 };
