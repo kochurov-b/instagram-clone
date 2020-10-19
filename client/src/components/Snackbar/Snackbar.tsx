@@ -33,7 +33,7 @@ export const Snackbar: FC<TProps> = ({
     if (open && autoHideDuration !== undefined) {
       setTimeout(() => onClose(), autoHideDuration);
     }
-  }, [open]);
+  }, [open, autoHideDuration, onClose]);
 
   return (
     <div className={snackbarWithSeverity}>
