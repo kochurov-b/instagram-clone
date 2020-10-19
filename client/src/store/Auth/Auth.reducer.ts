@@ -4,6 +4,7 @@ import { TActions, TState } from './Auth.types';
 
 const INITIAL_STATE: TState = {
   loading: false,
+  error: new Error(),
 };
 
 export const auth: Reducer<TState, TActions> = (
@@ -18,7 +19,21 @@ export const auth: Reducer<TState, TActions> = (
       return { ...state, loading: false };
     }
     case authConstants.LOGIN.FAILURE: {
+      const { payload: error } = action;
+
+      return { ...state, loading: false, error };
+    }
+
+    case authConstants.REGISTER.REQUEST: {
+      return { ...state, loading: true };
+    }
+    case authConstants.REGISTER.SUCCESS: {
       return { ...state, loading: false };
+    }
+    case authConstants.REGISTER.FAILURE: {
+      const { payload: error } = action;
+
+      return { ...state, loading: false, error };
     }
 
     default:

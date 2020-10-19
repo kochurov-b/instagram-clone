@@ -1,9 +1,10 @@
 import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
+import { get } from 'lodash';
 
 import { IField } from '../../components/Field/Field.types';
-import { loginThunk } from '../../store/Auth/Auth.middleware';
+import { loginThunk, registerThunk } from '../../store/Auth/Auth.middleware';
 import { generateError } from '../../utils/form/errors/errors';
 import { generateForm } from '../../utils/form/form';
 import { TOnChange as TOnChangeForm } from '../../utils/form/form.types';
@@ -24,7 +25,7 @@ const AUTH_HELPER: IAuthHelper = {
   },
 };
 
-const COMMON_FIELDS: IField[] = [
+const LOGIN_FIELDS: IField[] = [
   {
     label: 'Username',
     name: EForm.UserName,
@@ -57,7 +58,7 @@ type TIsSubmitButtonDisable = (form: IForm) => boolean;
 type TGenerateFormFields = (isRegister: boolean) => IField[];
 
 const generateFormFields: TGenerateFormFields = (isRegister) =>
-  isRegister ? [...REGISTER_FIELDS, ...COMMON_FIELDS] : COMMON_FIELDS;
+  isRegister ? [...REGISTER_FIELDS, ...LOGIN_FIELDS] : LOGIN_FIELDS;
 
 const isSubmitButtonDisable: TIsSubmitButtonDisable = (form) =>
   Object.values(form).some(
@@ -92,12 +93,24 @@ export const Auth: FC = () => {
 
   const handleSubmit: TOnSubmit = async (e) => {
     e.preventDefault();
+
     const {
       user_name: { value: userNameValue },
       password: { value: passwordValue },
     } = form;
+    const emailValue = get(form, 'email.value', '');
+    const fullNameValue = get(form, 'full_name.value', '');
 
-    dispatch(loginThunk(userNameValue, passwordValue));
+    const currentAction = isRegister
+      ? registerThunk({
+          email: emailValue,
+          full_name: fullNameValue,
+          login: userNameValue,
+          password: passwordValue,
+        })
+      : loginThunk(userNameValue, passwordValue);
+
+    dispatch(currentAction);
   };
 
   return (

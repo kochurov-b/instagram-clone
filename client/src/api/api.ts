@@ -3,21 +3,9 @@ import { Either, left, right } from '@sweet-monads/either';
 import { ERequestMethod } from './api.types';
 import { config } from '../config/config';
 import { NetworkError } from './api.errors';
-import { TMessages } from './helpers/messages/messages.types';
-import {
-  AUTH_MESSAGES,
-  COMMON_MESSAGES,
-  FORM_MESSAGES,
-} from './helpers/messages/messages';
 
 const DEFAULT_HEADERS = {
   'Content-Type': 'application/json',
-};
-
-const MESSAGE_FACTORY = {
-  ...COMMON_MESSAGES,
-  ...FORM_MESSAGES,
-  ...AUTH_MESSAGES,
 };
 
 type TRequestArgs = {
@@ -43,16 +31,11 @@ type TRequest = (
   args: TRequestArgs,
 ) => Promise<Either<Error, Either<string, any>>>;
 
-type TGenerateMessage = (message: TMessages) => string;
-
-const generateMessage: TGenerateMessage = (message) =>
-  MESSAGE_FACTORY[message] || MESSAGE_FACTORY.something_wont_wrong;
-
 const processResponse = ({
   data,
   message,
 }: TResponseData): Either<string, any> =>
-  message === '' ? right(data) : left(generateMessage(message as TMessages));
+  message === '' ? right(data) : left(message);
 
 export const request: TRequest = async ({
   query,

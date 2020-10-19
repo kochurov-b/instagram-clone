@@ -15,7 +15,7 @@ export type TAction = {
   payload?: any;
 };
 
-export type TGenerateLoadStatusActionCreatorExpected = {
+export type TGenerateLoadStatusExpected = {
   request: (payload?: any) => TAction;
   success: (payload?: any) => TAction;
   failure: (payload?: any) => TAction;

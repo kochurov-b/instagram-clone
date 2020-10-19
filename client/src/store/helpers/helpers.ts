@@ -1,15 +1,15 @@
 import {
   ELoadStatus,
   TAction,
-  TGenerateLoadStatusActionCreatorExpected,
+  TGenerateLoadStatusExpected,
   TTypeLoadStatusAction,
 } from './helpers.types';
 
 type TGenerateLoadStatusAction = (name: string) => TTypeLoadStatusAction;
 
-type TGenerateLoadStatusActionCreator = (
+type TGenerateLoadStatus = (
   name: TTypeLoadStatusAction,
-) => TGenerateLoadStatusActionCreatorExpected;
+) => TGenerateLoadStatusExpected;
 
 type TActionCreator = (type: string, payload?: any) => TAction;
 
@@ -27,9 +27,7 @@ export const generateLoadStatusAction: TGenerateLoadStatusAction = (name) =>
     {} as TTypeLoadStatusAction,
   );
 
-export const generateLoadStatusActionCreator: TGenerateLoadStatusActionCreator = (
-  name,
-) => ({
+export const generateLoadStatus: TGenerateLoadStatus = (name) => ({
   request: (payload) => generateActionCreator(name.REQUEST, payload),
   success: (payload) => generateActionCreator(name.SUCCESS, payload),
   failure: (payload) => generateActionCreator(name.FAILURE, payload),
