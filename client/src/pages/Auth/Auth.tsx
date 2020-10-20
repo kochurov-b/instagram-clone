@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useContext, useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { get } from 'lodash';
 
@@ -7,12 +7,14 @@ import { generateError } from '../../utils/form/errors/errors';
 import { generateForm } from '../../utils/form/form';
 import { TOnChange as TOnChangeForm } from '../../utils/form/form.types';
 import { useFetch } from '../../hooks/fetch/fetch.hook';
-import { ERequestMethod } from '../../hooks/fetch/fetch.types';
+import { ERequestMethod, TParams } from '../../hooks/fetch/fetch.types';
 import { AuthorizationError } from '../../hooks/fetch/fetch.errors';
 import { AuthLayout } from './Auth.layout';
 import { EForm, IForm, IHelper, TOnSubmit } from './Auth.types';
+import { AuthContext } from '../../context/Auth.context';
+import { TLogin as TLoginStorage } from '../../hooks/auth/auth.types';
 
-const REGISTER_ROUTE_REG = /\bregister\b/;
+const REGISTER_PAGE_REG = /\bregister\b/;
 
 const AUTH_HELPER: IAuthHelper = {
   login: {
@@ -55,7 +57,7 @@ interface IAuthHelper {
 
 type TIsSubmitButtonDisable = (form: IForm) => boolean;
 
-type TGenerateFormFields = (isRegister: boolean) => IField[];
+type TGenerateFormFields = (isRegisterPage: boolean) => IField[];
 
 type TLogin = (login: string, password: string) => void;
 
@@ -68,8 +70,13 @@ type TRegisterArgs = {
 
 type TRegister = (args: TRegisterArgs) => void;
 
-const generateFormFields: TGenerateFormFields = (isRegister) =>
-  isRegister ? [...REGISTER_FIELDS, ...LOGIN_FIELDS] : LOGIN_FIELDS;
+type TSaveLoginDataToStorage = (
+  params: TParams,
+  loginStorage: TLoginStorage,
+) => void;
+
+const generateFormFields: TGenerateFormFields = (isRegisterPage) =>
+  isRegisterPage ? [...REGISTER_FIELDS, ...LOGIN_FIELDS] : LOGIN_FIELDS;
 
 const isSubmitButtonDisable: TIsSubmitButtonDisable = (form) =>
   Object.values(form).some(
@@ -77,20 +84,33 @@ const isSubmitButtonDisable: TIsSubmitButtonDisable = (form) =>
       error.length !== 0 || (required && value.length === 0),
   );
 
+const saveLoginDataToStorage: TSaveLoginDataToStorage = (
+  params,
+  loginStorage,
+) => {
+  const token = get(params, 'token', null);
+  const userId = get(params, 'userId', null);
+
+  if (token !== null && userId !== null) {
+    loginStorage(token, userId);
+  }
+};
+
 export const Auth: FC = () => {
   const {
     location: { pathname },
   } = useHistory();
   const { request } = useFetch();
-  const isRegister = REGISTER_ROUTE_REG.test(pathname);
-  const initialForm = generateForm<IForm>(generateFormFields(isRegister));
+  const { login: loginStorage } = useContext(AuthContext);
+  const isRegisterPage = REGISTER_PAGE_REG.test(pathname);
+  const initialForm = generateForm<IForm>(generateFormFields(isRegisterPage));
   const [form, setForm] = useState<IForm>(initialForm);
-  const helper = isRegister ? AUTH_HELPER.register : AUTH_HELPER.login;
-  const submitButtonTitle = isRegister ? 'Sign up' : 'Log in';
+  const helper = isRegisterPage ? AUTH_HELPER.register : AUTH_HELPER.login;
+  const submitButtonTitle = isRegisterPage ? 'Sign up' : 'Log in';
 
   useEffect(() => {
-    setForm(() => generateForm<IForm>(generateFormFields(isRegister)));
-  }, [isRegister]);
+    setForm(() => generateForm<IForm>(generateFormFields(isRegisterPage)));
+  }, [isRegisterPage]);
 
   const login: TLogin = async (login, password) => {
     const response = await request({
@@ -102,9 +122,9 @@ export const Auth: FC = () => {
     response
       .mapLeft(() => new AuthorizationError('Cant authorize user'))
       .mapRight((data) => {
-        data.mapRight(({ params }) => {
-          console.log('data', params);
-        });
+        data.mapRight(({ params }) =>
+          saveLoginDataToStorage(params, loginStorage),
+        );
       });
   };
 
@@ -118,9 +138,9 @@ export const Auth: FC = () => {
     return response
       .mapLeft(() => new AuthorizationError('Cant registration user'))
       .mapRight((data) => {
-        data.mapRight(({ params }) => {
-          console.log('data', params);
-        });
+        data.mapRight(({ params }) =>
+          saveLoginDataToStorage(params, loginStorage),
+        );
       });
   };
 
@@ -144,7 +164,7 @@ export const Auth: FC = () => {
     const emailValue = get(form, 'email.value', '');
     const fullNameValue = get(form, 'full_name.value', '');
 
-    return isRegister
+    return isRegisterPage
       ? register({
           email: emailValue,
           full_name: fullNameValue,

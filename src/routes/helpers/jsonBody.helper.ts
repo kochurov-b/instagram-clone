@@ -3,10 +3,15 @@ interface IError {
   message: string;
 }
 
+type TParams = {
+  token?: string;
+  userId?: number;
+};
+
 interface IJsonBody {
   data?: any[];
   message?: string;
-  params?: Object;
+  params?: TParams;
   error?: Error | IError[];
 }
 

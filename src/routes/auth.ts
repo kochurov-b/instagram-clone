@@ -78,6 +78,7 @@ router.post(
             generateJsonBody({
               params: {
                 token: generateJwtToken(user.id, jwtSecretKey),
+                userId: user.id,
               },
             }),
           )

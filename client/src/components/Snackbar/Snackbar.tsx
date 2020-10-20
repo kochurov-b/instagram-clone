@@ -30,7 +30,7 @@ export const Snackbar: FC<TProps> = ({
   const snackbarWithSeverity = `${snackbarVisibleClass} snackbar--${severityClassFactory[severity]}`;
 
   useEffect(() => {
-    if (open && autoHideDuration !== undefined) {
+    if (open && autoHideDuration) {
       setTimeout(() => onClose(), autoHideDuration);
     }
   }, [open, autoHideDuration, onClose]);

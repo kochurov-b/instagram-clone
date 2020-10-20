@@ -8,9 +8,14 @@ type TError = {
   message: string;
 };
 
+export type TParams = {
+  token?: string;
+  userId?: string;
+};
+
 export type TResponseData = {
   data: any;
   message: string;
-  params: Object;
+  params: TParams;
   errors: TError[];
 };
