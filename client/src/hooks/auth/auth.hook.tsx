@@ -9,6 +9,7 @@ enum ELocalStorageName {
 export const useAuth = (): TUseAuthExpected => {
   const [token, setToken] = useState<string | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
+  const [userDataReady, setUserDataReady] = useState<boolean>(false);
 
   useEffect(() => {
     const data = localStorage.getItem(ELocalStorageName.User);
@@ -19,7 +20,9 @@ export const useAuth = (): TUseAuthExpected => {
       setToken(() => token);
       setUserId(() => userId);
     }
-  }, []);
+
+    setUserDataReady(() => true);
+  }, [setToken, setUserId]);
 
   const login: TLogin = (token, userId) => {
     setToken(() => token);
@@ -38,5 +41,5 @@ export const useAuth = (): TUseAuthExpected => {
     localStorage.removeItem(ELocalStorageName.User);
   };
 
-  return { isAuthenticated: !!token, userId, login, logout };
+  return { isAuthenticated: !!token, userDataReady, userId, login, logout };
 };
