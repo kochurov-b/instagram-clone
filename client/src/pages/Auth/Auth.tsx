@@ -1,14 +1,14 @@
 import React, { FC, useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { get } from 'lodash';
 
 import { IField } from '../../components/Field/Field.types';
-import { loginThunk, registerThunk } from '../../store/Auth/Auth.middleware';
 import { generateError } from '../../utils/form/errors/errors';
 import { generateForm } from '../../utils/form/form';
 import { TOnChange as TOnChangeForm } from '../../utils/form/form.types';
-
+import { useFetch } from '../../hooks/fetch/fetch.hook';
+import { ERequestMethod } from '../../hooks/fetch/fetch.types';
+import { AuthorizationError } from '../../hooks/fetch/fetch.errors';
 import { AuthLayout } from './Auth.layout';
 import { EForm, IForm, IHelper, TOnSubmit } from './Auth.types';
 
@@ -57,6 +57,17 @@ type TIsSubmitButtonDisable = (form: IForm) => boolean;
 
 type TGenerateFormFields = (isRegister: boolean) => IField[];
 
+type TLogin = (login: string, password: string) => void;
+
+type TRegisterArgs = {
+  email: string;
+  full_name: string;
+  login: string;
+  password: string;
+};
+
+type TRegister = (args: TRegisterArgs) => void;
+
 const generateFormFields: TGenerateFormFields = (isRegister) =>
   isRegister ? [...REGISTER_FIELDS, ...LOGIN_FIELDS] : LOGIN_FIELDS;
 
@@ -70,16 +81,48 @@ export const Auth: FC = () => {
   const {
     location: { pathname },
   } = useHistory();
+  const { request } = useFetch();
   const isRegister = REGISTER_ROUTE_REG.test(pathname);
   const initialForm = generateForm<IForm>(generateFormFields(isRegister));
   const [form, setForm] = useState<IForm>(initialForm);
   const helper = isRegister ? AUTH_HELPER.register : AUTH_HELPER.login;
   const submitButtonTitle = isRegister ? 'Sign up' : 'Log in';
-  const dispatch = useDispatch();
 
   useEffect(() => {
     setForm(() => generateForm<IForm>(generateFormFields(isRegister)));
   }, [isRegister]);
+
+  const login: TLogin = async (login, password) => {
+    const response = await request({
+      method: ERequestMethod.Post,
+      query: 'auth/login',
+      body: { login, password },
+    });
+
+    response
+      .mapLeft(() => new AuthorizationError('Cant authorize user'))
+      .mapRight((data) => {
+        data.mapRight(({ params }) => {
+          console.log('data', params);
+        });
+      });
+  };
+
+  const register: TRegister = async ({ email, full_name, login, password }) => {
+    const response = await request({
+      method: ERequestMethod.Post,
+      query: 'auth/register',
+      body: { email, full_name, login, password },
+    });
+
+    return response
+      .mapLeft(() => new AuthorizationError('Cant registration user'))
+      .mapRight((data) => {
+        data.mapRight(({ params }) => {
+          console.log('data', params);
+        });
+      });
+  };
 
   const handleChange: TOnChangeForm<IForm> = ({ name, value, required }) =>
     setForm((prevState) => ({
@@ -101,16 +144,14 @@ export const Auth: FC = () => {
     const emailValue = get(form, 'email.value', '');
     const fullNameValue = get(form, 'full_name.value', '');
 
-    const currentAction = isRegister
-      ? registerThunk({
+    return isRegister
+      ? register({
           email: emailValue,
           full_name: fullNameValue,
           login: userNameValue,
           password: passwordValue,
         })
-      : loginThunk(userNameValue, passwordValue);
-
-    dispatch(currentAction);
+      : login(userNameValue, passwordValue);
   };
 
   return (
