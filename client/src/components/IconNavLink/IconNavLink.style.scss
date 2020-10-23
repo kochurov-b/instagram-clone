@@ -1,0 +1,17 @@
+.icon-link {
+  display: flex;
+  border-bottom: 2px solid transparent;
+  padding-bottom: 4px;
+
+  &:hover {
+    border-color: #dbdbdb;
+  }
+
+  &--active {
+    border-color: #262626;
+
+    &:hover {
+      border-color: #262626;
+    }
+  }
+}
