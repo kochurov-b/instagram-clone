@@ -1,0 +1,28 @@
+.search-field {
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 8px;
+    width: 10px;
+    height: 10px;
+    transform: translateY(-50%);
+    background: url('../../assets/images/sprite.png') no-repeat -428px -241px;
+    background-size: 440px 411px;
+    pointer-events: none;
+  }
+
+  &__input {
+    width: 215px;
+    padding: 6px 24px;
+    border-radius: 3px;
+    background-color: #fafafa;
+    border: 1px solid #dbdbdb;
+
+    &::placeholder {
+      color: #8e8e8e;
+    }
+  }
+}
