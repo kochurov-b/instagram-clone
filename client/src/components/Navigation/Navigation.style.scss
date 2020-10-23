@@ -1,0 +1,79 @@
+.navigation {
+  display: flex;
+  justify-content: center;
+  background-color: #ffffff;
+  border-bottom: 1px solid #dbdbdb;
+
+  &__content {
+    position: relative;
+    width: 100%;
+    max-width: 975px;
+    padding: 12px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+}
+
+.logo {
+  &__link {
+    display: block;
+    background: url('../../assets/images/sprite.png') no-repeat -250px -181px;
+    background-size: 440px 411px;
+    width: 103px;
+    height: 29px;
+  }
+}
+
+.search {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 215px;
+  height: 29px;
+}
+
+.actions {
+  margin: 0;
+  padding: 0;
+  display: flex;
+
+  &__item {
+    list-style: none;
+    margin-left: 16px;
+
+    &:first-child {
+      margin-left: 0;
+    }
+  }
+}
+
+.auth-links {
+  &__link {
+    border-radius: 4px;
+    font-size: 15px;
+    font-weight: 600;
+    text-decoration: none;
+    padding: 6px 8px;
+    transition: 0.25s;
+
+    &--login {
+      color: white;
+      background-color: #0095f6;
+      margin-right: 8px;
+
+      &:hover {
+        background-color: #0280d4;
+      }
+    }
+
+    &--register {
+      color: #0095f6;
+
+      &:hover {
+        color: #262626;
+      }
+    }
+  }
+}
