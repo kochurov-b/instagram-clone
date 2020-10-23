@@ -129,12 +129,16 @@ router.post(
         return res.status(EStatusCode.BadRequest).json(
           generateJsonBody({
             message: EAuthMessage.UserAlreadyExist,
+            error: {
+              name: EAuthMessage.InvalidLoginOrPassword,
+              message: EAuthMessage.InvalidLoginOrPassword,
+            },
           }),
         );
       }
 
       const { jwtSecretKey } = config;
-      const hashPassword = bcrypt.hash(password, 10);
+      const hashPassword = await bcrypt.hash(password, 10);
       const userNew = new User({
         email,
         full_name,

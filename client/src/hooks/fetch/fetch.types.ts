@@ -17,5 +17,5 @@ export type TResponseData = {
   data: any;
   message: string;
   params: TParams;
-  errors: TError[];
+  error: TError[];
 };

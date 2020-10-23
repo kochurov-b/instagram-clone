@@ -1,5 +1,6 @@
 import { useContext, useState } from 'react';
 import { Either, left, right } from '@sweet-monads/either';
+import { isEmpty } from 'lodash';
 
 import { ERequestMethod, TResponseData } from './fetch.types';
 import { config } from '../../config/config';
@@ -35,7 +36,14 @@ const errorProcessing: TErrorProcessing = (data, openSnackbar) =>
     .mapLeft((message) =>
       openSnackbar({ open: true, message, severity: ESeverity.Error }),
     )
-    .mapRight((data) => data);
+    .mapRight((data) => {
+      const { message } = data;
+
+      if (message !== '')
+        openSnackbar({ open: true, message, severity: ESeverity.Success });
+
+      return data;
+    });
 
 export const useFetch = () => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -68,9 +76,11 @@ export const useFetch = () => {
         body: body as string,
       });
       const data: TResponseData = await response.json();
-      const { message } = data;
-      const errorDataCheck: Either<string, TResponseData> =
-        message === '' ? right(data) : left(message);
+      const { message, error } = data;
+      const isError = !isEmpty(error) && message !== '';
+      const errorDataCheck: Either<string, TResponseData> = isError
+        ? left(message)
+        : right(data);
 
       setLoading(() => false);
 
