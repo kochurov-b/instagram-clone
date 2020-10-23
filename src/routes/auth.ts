@@ -21,12 +21,12 @@ enum EAuthMessage {
 enum EFormFields {
   Email = 'email',
   FullName = 'full_name',
-  Login = 'login',
+  Username = 'username',
   Password = 'password',
 }
 
 interface IBodyLogin {
-  [EFormFields.Login]: string;
+  [EFormFields.Username]: string;
   [EFormFields.Password]: string;
 }
 
@@ -43,12 +43,12 @@ const generateJwtToken: TGenerateJwtToken = (userId, secretKey) =>
 router.post(
   '/login',
   [
-    check(EFormFields.Login, '').notEmpty(),
+    check(EFormFields.Username, '').notEmpty(),
     check(EFormFields.Password, '').exists(),
   ],
   async (req: Request, res: Response) => {
     try {
-      const { login, password } = req.body as IBodyLogin;
+      const { username, password } = req.body as IBodyLogin;
       const validationErrors = validationResult(req);
 
       if (!validationErrors.isEmpty())
@@ -58,7 +58,7 @@ router.post(
           }),
         );
 
-      const user = await User.findOne({ login });
+      const user = await User.findOne({ username });
       if (!user)
         return res.status(EStatusCode.BadRequest).json(
           generateJsonBody({
@@ -107,13 +107,18 @@ router.post(
   [
     check(EFormFields.Email, EFormMessage.FieldNotEmpty).notEmpty(),
     check(EFormFields.FullName, EFormMessage.FieldNotEmpty).notEmpty(),
-    check(EFormFields.Login, EFormMessage.FieldNotEmpty).notEmpty(),
+    check(EFormFields.Username, EFormMessage.FieldNotEmpty).notEmpty(),
     check(EFormFields.Password, EFormMessage.FieldNotEmpty).notEmpty(),
   ],
   async (req: Request, res: Response) => {
     try {
-      const { email, full_name, login, password } = req.body as IBodyRegister;
-      const user = await User.findOne({ login });
+      const {
+        email,
+        full_name,
+        username,
+        password,
+      } = req.body as IBodyRegister;
+      const user = await User.findOne({ username });
       const validationErrors = validationResult(req);
 
       if (!validationErrors.isEmpty()) {
@@ -142,7 +147,7 @@ router.post(
       const userNew = new User({
         email,
         full_name,
-        login,
+        username,
         password: hashPassword,
       });
 
@@ -152,7 +157,7 @@ router.post(
         generateJsonBody({
           message: EAuthMessage.UserCreated,
           params: {
-            token: generateJwtToken(login, jwtSecretKey),
+            token: generateJwtToken(username, jwtSecretKey),
           },
         }),
       );

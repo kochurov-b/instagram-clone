@@ -60,12 +60,12 @@ type TIsSubmitButtonDisable = (form: IForm) => boolean;
 
 type TGenerateFormFields = (isRegisterPage: boolean) => IField[];
 
-type TLogin = (login: string, password: string) => void;
+type TLogin = (username: string, password: string) => void;
 
 type TRegisterArgs = {
   email: string;
   full_name: string;
-  login: string;
+  username: string;
   password: string;
 };
 
@@ -114,11 +114,11 @@ export const Auth: FC = () => {
     setForm(() => generateForm<IForm>(generateFormFields(isRegisterPage)));
   }, [isRegisterPage]);
 
-  const login: TLogin = async (login, password) => {
+  const login: TLogin = async (username, password) => {
     const response = await request({
       method: ERequestMethod.Post,
       query: 'auth/login',
-      body: { login, password },
+      body: { username, password },
     });
 
     response
@@ -131,11 +131,16 @@ export const Auth: FC = () => {
       });
   };
 
-  const register: TRegister = async ({ email, full_name, login, password }) => {
+  const register: TRegister = async ({
+    email,
+    full_name,
+    username,
+    password,
+  }) => {
     const response = await request({
       method: ERequestMethod.Post,
       query: 'auth/register',
-      body: { email, full_name, login, password },
+      body: { email, full_name, username, password },
     });
 
     return response
@@ -169,7 +174,7 @@ export const Auth: FC = () => {
       ? register({
           email: emailValue,
           full_name: fullNameValue,
-          login: userNameValue,
+          username: userNameValue,
           password: passwordValue,
         })
       : login(userNameValue, passwordValue);
