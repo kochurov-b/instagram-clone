@@ -1,0 +1,9 @@
+.base {
+  display: flex;
+  justify-content: center;
+  &__content {
+    width: 100%;
+    max-width: 975px;
+    padding: 24px;
+  }
+}

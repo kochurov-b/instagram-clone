@@ -4,6 +4,8 @@ import { Navigation } from '../../components/Navigation/Navigation';
 import { TAction } from '../../components/Navigation/Navigation.types';
 import { TOnChange as TOnChangeSearch } from '../../components/SearchField/SearchField.types';
 
+import './Base.style.scss';
+
 type TProps = {
   isAuthenticated: boolean;
   actions: TAction[];
@@ -25,6 +27,8 @@ export const BaseLayout: FC<TProps> = ({
       searchValue={searchValue}
       onChangeSearch={onChangeSearch}
     />
-    <main>{children}</main>
+    <main className="base">
+      <div className="base__content">{children}</div>
+    </main>
   </>
 );

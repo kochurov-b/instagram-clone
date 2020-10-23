@@ -1,0 +1,45 @@
+.profile {
+  &__header {
+    display: flex;
+    align-items: center;
+  }
+
+  &__avatar {
+    width: 150px;
+    height: 150px;
+    background-color: black;
+    margin: 0 64px;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+
+    &-img {
+      display: block;
+      width: 100%;
+    }
+  }
+}
+
+.user-info {
+  &__login {
+    margin: 0;
+    font-weight: 400;
+  }
+
+  &__counters {
+    display: flex;
+    margin: 24px 0;
+
+    &-item {
+      margin-right: 32px;
+
+      span {
+        font-weight: 600;
+      }
+    }
+  }
+
+  &__full-name {
+    font-weight: 600;
+  }
+}

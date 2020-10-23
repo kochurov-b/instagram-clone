@@ -3,6 +3,7 @@ import { Main } from '../pages/Main/Main';
 import { NotFound } from '../pages/NotFound/NotFound';
 import { Base as BaseContainer } from '../containers/Base/Base';
 import { TRoute } from './routes.types';
+import { Profile } from '../pages/Profile/Profile';
 
 export const ROOT = '/';
 export const LOGIN = '/login';
@@ -46,7 +47,7 @@ export const AUTHENTICATED_ROUTES: TRoute[] = [
   },
   {
     path: PROFILE,
-    component: NotFound,
+    component: Profile,
   },
 ];
 

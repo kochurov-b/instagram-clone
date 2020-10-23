@@ -11,9 +11,15 @@ type TRenderRoute = (route: TRoute, isAuthenticated: boolean) => JSX.Element;
 type TRenderRoutes = (
   routes: TRoute[],
   isAuthenticated: boolean,
-) => JSX.Element;
+) => JSX.Element[];
 
-type TRenderLayout = (layout: TLayout, isAuthenticated: boolean) => JSX.Element;
+type TRenderLayoutArgs = {
+  layout: TLayout;
+  isAuthenticated: boolean;
+  key: number;
+};
+
+type TRenderLayout = (args: TRenderLayoutArgs) => JSX.Element;
 
 const renderRoute: TRenderRoute = (
   { path, exact, component: Component },
@@ -36,24 +42,28 @@ const renderRoute: TRenderRoute = (
   />
 );
 
-const renderRoutes: TRenderRoutes = (routes, isAuthenticated) => (
-  <Switch>{routes.map((route) => renderRoute(route, isAuthenticated))}</Switch>
-);
+const renderRoutes: TRenderRoutes = (routes, isAuthenticated) =>
+  routes.map((route) => renderRoute(route, isAuthenticated));
 
-const renderLayout: TRenderLayout = (
-  { routes, layout: Layout },
+const renderLayout: TRenderLayout = ({
+  layout: { routes, layout: Layout },
   isAuthenticated,
-) => {
+  key,
+}) => {
   if (Layout)
     return (
-      <Layout>
+      <Layout key={key}>
         <Switch>{renderRoutes(routes, isAuthenticated)}</Switch>
       </Layout>
     );
 
-  return renderRoutes(routes, isAuthenticated);
+  return <Switch key={key}>{renderRoutes(routes, isAuthenticated)}</Switch>;
 };
 
 export const Routes: FC<TProps> = ({ isAuthenticated }) => (
-  <div>{LAYOUTS.map((layout) => renderLayout(layout, isAuthenticated))}</div>
+  <div>
+    {LAYOUTS.map((layout, key) =>
+      renderLayout({ layout, isAuthenticated, key }),
+    )}
+  </div>
 );
