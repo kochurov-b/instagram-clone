@@ -5,7 +5,7 @@ import { SnackbarContext } from '../Snackbar/Snackbar.context';
 import { useSnackbar } from '../Snackbar/useSnackbar';
 import { AuthContext } from '../../context/Auth.context';
 import { useAuth } from '../../hooks/auth/auth.hook';
-import { useRoutes } from '../../routes/routes.hook';
+import { Routes } from '../../routes/Routes';
 import { ReactComponent as Loader } from '../../assets/images/loader.svg';
 
 import './App.scss';
@@ -15,7 +15,6 @@ export const App: FC = () => {
   const snackbarValues = useSnackbar();
   const { isAuthenticated, userDataReady } = authValues;
   const { open, message, severity, closeSnackbar } = snackbarValues;
-  const { routes } = useRoutes(isAuthenticated);
 
   if (!userDataReady)
     return (
@@ -28,16 +27,16 @@ export const App: FC = () => {
     <div className="app">
       <AuthContext.Provider value={authValues}>
         <SnackbarContext.Provider value={snackbarValues}>
-          {routes}
-          <Snackbar
-            open={open}
-            message={message}
-            severity={severity}
-            autoHideDuration={5000}
-            onClose={closeSnackbar}
-          />
+          <Routes isAuthenticated={isAuthenticated} />
         </SnackbarContext.Provider>
       </AuthContext.Provider>
+      <Snackbar
+        open={open}
+        message={message}
+        severity={severity}
+        autoHideDuration={5000}
+        onClose={closeSnackbar}
+      />
     </div>
   );
 };

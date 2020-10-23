@@ -13,6 +13,7 @@ import { AuthLayout } from './Auth.layout';
 import { EForm, IForm, IHelper, TOnSubmit } from './Auth.types';
 import { AuthContext } from '../../context/Auth.context';
 import { TLogin as TLoginStorage } from '../../hooks/auth/auth.types';
+import { LOGIN, ROOT } from '../../routes/routes.config';
 
 const REGISTER_PAGE_REG = /\bregister\b/;
 
@@ -97,9 +98,10 @@ const saveLoginDataToStorage: TSaveLoginDataToStorage = (
 };
 
 export const Auth: FC = () => {
+  const history = useHistory();
   const {
     location: { pathname },
-  } = useHistory();
+  } = history;
   const { request } = useFetch();
   const { login: loginStorage } = useContext(AuthContext);
   const isRegisterPage = REGISTER_PAGE_REG.test(pathname);
@@ -122,9 +124,10 @@ export const Auth: FC = () => {
     response
       .mapLeft(() => new AuthorizationError('Cant authorize user'))
       .mapRight((data) => {
-        data.mapRight(({ params }) =>
-          saveLoginDataToStorage(params, loginStorage),
-        );
+        data.mapRight(({ params }) => {
+          saveLoginDataToStorage(params, loginStorage);
+          history.push(ROOT);
+        });
       });
   };
 
@@ -138,9 +141,7 @@ export const Auth: FC = () => {
     return response
       .mapLeft(() => new AuthorizationError('Cant registration user'))
       .mapRight((data) => {
-        data.mapRight(({ params }) =>
-          saveLoginDataToStorage(params, loginStorage),
-        );
+        data.mapRight(() => history.push(LOGIN));
       });
   };
 
