@@ -13,7 +13,7 @@ type TGetUserInfo = (id: string) => Promise<void>;
 
 export const Profile: FC = () => {
   const { get } = useFetch();
-  const { userId } = useContext(AuthContext);
+  const { userId, logout } = useContext(AuthContext);
   const {
     state: {
       user: { username, full_name, posts, followers, following },
@@ -62,6 +62,7 @@ export const Profile: FC = () => {
       username={username}
       fullName={full_name}
       counters={counters}
+      logout={logout}
     />
   );
 };

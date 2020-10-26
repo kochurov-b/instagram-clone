@@ -1,0 +1,43 @@
+.dropdown {
+  position: relative;
+
+  &__button {
+    padding: 0;
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+    display: flex;
+  }
+
+  &__menu {
+    position: absolute;
+    left: -15px;
+    transform: translateY(20px);
+    min-width: 200px;
+    width: auto;
+    height: auto;
+    border-radius: 6px;
+    box-shadow: 0 0 5px 1px rgba(0, 0, 0, 0.0975);
+    background-color: #fff;
+    opacity: 0;
+    visibility: hidden;
+    overflow: hidden;
+    transition: 0.25s;
+
+    &--visible {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(5px);
+    }
+
+    &-item {
+      padding: 10px;
+      cursor: pointer;
+      overflow: hidden;
+
+      &:hover {
+        background-color: #fafafa;
+      }
+    }
+  }
+}
