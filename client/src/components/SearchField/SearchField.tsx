@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, memo } from 'react';
 
 import { TOnChange } from './SearchField.types';
 import './SearchField.style.scss';
@@ -8,7 +8,7 @@ type TProps = {
   onChange: TOnChange;
 };
 
-export const SearchField: FC<TProps> = ({ value, onChange }) => (
+export const SearchField: FC<TProps> = memo(({ value, onChange }) => (
   <div className="search-field">
     <input
       type="text"
@@ -18,4 +18,4 @@ export const SearchField: FC<TProps> = ({ value, onChange }) => (
       onChange={({ target: { value } }) => onChange(value)}
     />
   </div>
-);
+));

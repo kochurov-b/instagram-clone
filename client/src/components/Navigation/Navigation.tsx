@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, memo } from 'react';
 import { Link } from 'react-router-dom';
 
 import { SearchField } from '../SearchField/SearchField';
@@ -19,6 +19,8 @@ type TRenderAction = (action: TAction) => JSX.Element;
 
 type TRenderActionList = (actions: TAction[]) => JSX.Element;
 
+const MemoLink = memo(Link);
+
 const renderAction: TRenderAction = ({
   icon,
   path,
@@ -36,30 +38,30 @@ const renderActionList: TRenderActionList = (actions) => (
 
 const renderAuthLinks = () => (
   <div className="auth-links">
-    <Link to={LOGIN} className="auth-links__link auth-links__link--login">
+    <MemoLink to={LOGIN} className="auth-links__link auth-links__link--login">
       Log In
-    </Link>
-    <Link to={REGISTER} className="auth-links__link auth-links__link--register">
+    </MemoLink>
+    <MemoLink
+      to={REGISTER}
+      className="auth-links__link auth-links__link--register"
+    >
       Sign Up
-    </Link>
+    </MemoLink>
   </div>
 );
 
-export const Navigation: FC<TProps> = ({
-  isAuthenticated,
-  actions,
-  searchValue,
-  onChangeSearch,
-}) => (
-  <nav className="navigation">
-    <div className="navigation__content">
-      <div className="logo">
-        <Link to={ROOT} className={'logo__link'} />
+export const Navigation: FC<TProps> = memo(
+  ({ isAuthenticated, actions, searchValue, onChangeSearch }) => (
+    <nav className="navigation">
+      <div className="navigation__content">
+        <div className="logo">
+          <MemoLink to={ROOT} className={'logo__link'} />
+        </div>
+        <div className="search">
+          <SearchField value={searchValue} onChange={onChangeSearch} />
+        </div>
+        {isAuthenticated ? renderActionList(actions) : renderAuthLinks()}
       </div>
-      <div className="search">
-        <SearchField value={searchValue} onChange={onChangeSearch} />
-      </div>
-      {isAuthenticated ? renderActionList(actions) : renderAuthLinks()}
-    </div>
-  </nav>
+    </nav>
+  ),
 );

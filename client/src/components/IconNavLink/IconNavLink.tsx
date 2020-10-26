@@ -1,10 +1,10 @@
-import React, { FC } from 'react';
+import React, { FC, memo } from 'react';
 import { NavLink } from 'react-router-dom';
 
 import { TProps } from './IconNavLink.types';
 import './IconNavLink.style.scss';
 
-export const IconNavLink: FC<TProps> = ({ path, exact, icon: Icon }) => (
+export const IconNavLink: FC<TProps> = memo(({ path, exact, icon: Icon }) => (
   <NavLink
     to={path}
     exact={exact}
@@ -13,4 +13,4 @@ export const IconNavLink: FC<TProps> = ({ path, exact, icon: Icon }) => (
   >
     <Icon />
   </NavLink>
-);
+));
