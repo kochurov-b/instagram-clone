@@ -3,7 +3,8 @@ import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 
 import { config } from './config/config';
-import { router as authRouter } from './routes/auth';
+import { router as authRouter } from './routes/auth/auth';
+import { router as userRouter } from './routes/user';
 
 dotenv.config();
 
@@ -13,6 +14,7 @@ app.use(express.json());
 
 // Routes
 app.use('/api/auth', authRouter);
+app.use('/api/user', userRouter);
 
 const start = async () => {
   const { port, mongooseUri } = config;

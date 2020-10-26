@@ -3,20 +3,14 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { check, validationResult } from 'express-validator';
 
-import { User } from '../models/User';
-import { generateJsonBody } from './helpers/jsonBody.helper';
-import { EFormMessage, EStatusCode } from './helpers/helpers.types';
-import { config } from '../config/config';
-import { generateErrors } from './helpers/error.helper';
+import { User } from '../../models/User';
+import { generateJsonBody } from '../helpers/jsonBody.helper';
+import { EFormMessage, EStatusCode } from '../helpers/helpers.types';
+import { config } from '../../config/config';
+import { generateErrors } from '../helpers/error.helper';
+import { EAuthMessage } from './auth.types';
 
 export const router = Router();
-
-enum EAuthMessage {
-  UserCreated = 'User created',
-  UserNotFound = 'User not found',
-  UserAlreadyExist = 'User already exist',
-  InvalidLoginOrPassword = 'Invalid login or password',
-}
 
 enum EFormFields {
   Email = 'email',

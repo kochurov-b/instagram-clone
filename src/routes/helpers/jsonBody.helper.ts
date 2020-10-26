@@ -9,7 +9,7 @@ type TParams = {
 };
 
 interface IJsonBody {
-  data?: any[];
+  data?: any[] | Object;
   message?: string;
   params?: TParams;
   error?: Error | IError[];

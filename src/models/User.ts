@@ -1,13 +1,12 @@
-import { Schema, model, Document } from 'mongoose';
+import { Schema, model } from 'mongoose';
 
-interface IUser extends Document {
-  email: string;
-  full_name: string;
-  username: string;
-  password: string;
-}
+import { IUser } from './User.types';
 
 const schema: Schema<IUser> = new Schema({
+  avatar: {
+    data: Buffer,
+    contentType: String,
+  },
   email: {
     type: String,
     required: true,
@@ -15,6 +14,21 @@ const schema: Schema<IUser> = new Schema({
   full_name: {
     type: String,
     required: true,
+  },
+  posts: {
+    type: Array,
+    required: true,
+    default: [],
+  },
+  followers: {
+    type: Array,
+    required: true,
+    default: [],
+  },
+  following: {
+    type: Array,
+    required: true,
+    default: [],
   },
   username: {
     type: String,
