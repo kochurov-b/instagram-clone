@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import {
   getStorage,
@@ -31,19 +31,19 @@ export const useAuth = (): TUseAuthExpected => {
     setUserDataReady(() => true);
   }, [setToken, setUserId]);
 
-  const login: TLogin = (token, userId) => {
+  const login: TLogin = useCallback((token, userId) => {
     setToken(() => token);
     setUserId(() => userId);
 
     setStorage(EStorageName.User, { token, userId });
-  };
+  }, []);
 
-  const logout = () => {
+  const logout = useCallback(() => {
     setToken(() => null);
     setUserId(() => null);
 
     removeStorage(EStorageName.User);
-  };
+  }, []);
 
   return {
     isAuthenticated: !!token,

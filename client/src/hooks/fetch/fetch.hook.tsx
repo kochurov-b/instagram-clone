@@ -126,7 +126,7 @@ export const useFetch = () => {
         return left(new NetworkError(error.message));
       }
     },
-    [openSnackbar],
+    [openSnackbar, logout],
   );
 
   const get = useCallback(
@@ -139,7 +139,7 @@ export const useFetch = () => {
           ...headers,
         },
       }),
-    [request],
+    [request, token],
   );
 
   return { loading, error, request, get };
