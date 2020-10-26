@@ -5,6 +5,7 @@ interface IConfig {
     password: string | undefined,
   ) => string;
   jwtSecretKey: string;
+  jwtTokenLiveTime: string;
 }
 
 export const config: IConfig = {
@@ -12,4 +13,5 @@ export const config: IConfig = {
   mongooseUri: (user, password) =>
     `mongodb+srv://${user}:${password}@cluster0.fexuy.mongodb.net/test`,
   jwtSecretKey: 'secret key',
+  jwtTokenLiveTime: '1h',
 };

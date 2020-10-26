@@ -29,10 +29,19 @@ interface IBodyRegister extends IBodyLogin {
   [EFormFields.FullName]: string;
 }
 
-type TGenerateJwtToken = (userId: string, secretKey: string) => string;
+type TGenerateJwtTokenArgs = {
+  encryptedData: string;
+  secretKey: string;
+  tokenLiveTime: string;
+};
 
-const generateJwtToken: TGenerateJwtToken = (userId, secretKey) =>
-  jwt.sign({ userId }, secretKey, { expiresIn: '1h' });
+type TGenerateJwtToken = (args: TGenerateJwtTokenArgs) => string;
+
+const generateJwtToken: TGenerateJwtToken = ({
+  encryptedData,
+  secretKey,
+  tokenLiveTime,
+}) => jwt.sign({ encryptedData }, secretKey, { expiresIn: tokenLiveTime });
 
 router.post(
   '/login',
@@ -65,13 +74,17 @@ router.post(
         );
 
       const isMatchPassword = await bcrypt.compare(password, user.password);
-      const { jwtSecretKey } = config;
+      const { jwtSecretKey, jwtTokenLiveTime } = config;
 
       return isMatchPassword
         ? res.status(EStatusCode.Ok).json(
             generateJsonBody({
               params: {
-                token: generateJwtToken(user.id, jwtSecretKey),
+                token: generateJwtToken({
+                  encryptedData: user.id,
+                  secretKey: jwtSecretKey,
+                  tokenLiveTime: jwtTokenLiveTime,
+                }),
                 userId: user.id,
               },
             }),
@@ -136,7 +149,7 @@ router.post(
         );
       }
 
-      const { jwtSecretKey } = config;
+      const { jwtSecretKey, jwtTokenLiveTime } = config;
       const hashPassword = await bcrypt.hash(password, 10);
       const userNew = new User({
         email,
@@ -151,7 +164,11 @@ router.post(
         generateJsonBody({
           message: EAuthMessage.UserCreated,
           params: {
-            token: generateJwtToken(username, jwtSecretKey),
+            token: generateJwtToken({
+              encryptedData: username,
+              secretKey: jwtSecretKey,
+              tokenLiveTime: jwtTokenLiveTime,
+            }),
           },
         }),
       );
