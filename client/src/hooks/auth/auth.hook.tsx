@@ -1,10 +1,17 @@
 import { useEffect, useState } from 'react';
 
+import {
+  getStorage,
+  removeStorage,
+  setStorage,
+} from '../../utils/localStorage/localStorage';
+import { EStorageName } from '../../utils/localStorage/localStorage.types';
 import { TLogin, TUseAuthExpected } from './auth.types';
 
-enum ELocalStorageName {
-  User = 'user',
-}
+type TUserStorage = {
+  token: string;
+  userId: string;
+};
 
 export const useAuth = (): TUseAuthExpected => {
   const [token, setToken] = useState<string | null>(null);
@@ -12,10 +19,10 @@ export const useAuth = (): TUseAuthExpected => {
   const [userDataReady, setUserDataReady] = useState<boolean>(false);
 
   useEffect(() => {
-    const data = localStorage.getItem(ELocalStorageName.User);
+    const data = getStorage<TUserStorage>(EStorageName.User);
 
-    if (data !== null) {
-      const { token, userId } = JSON.parse(data);
+    if (data) {
+      const { token, userId } = data;
 
       setToken(() => token);
       setUserId(() => userId);
@@ -28,18 +35,22 @@ export const useAuth = (): TUseAuthExpected => {
     setToken(() => token);
     setUserId(() => userId);
 
-    localStorage.setItem(
-      ELocalStorageName.User,
-      JSON.stringify({ token, userId }),
-    );
+    setStorage(EStorageName.User, { token, userId });
   };
 
   const logout = () => {
     setToken(() => null);
     setUserId(() => null);
 
-    localStorage.removeItem(ELocalStorageName.User);
+    removeStorage(EStorageName.User);
   };
 
-  return { isAuthenticated: !!token, userDataReady, userId, login, logout };
+  return {
+    isAuthenticated: !!token,
+    token,
+    userId,
+    userDataReady,
+    login,
+    logout,
+  };
 };

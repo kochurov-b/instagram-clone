@@ -3,6 +3,11 @@ export enum ERequestMethod {
   Post = 'POST',
 }
 
+export enum EStatusCode {
+  Created = 201,
+  Unauthorized = 401,
+}
+
 type TError = {
   param: string;
   message: string;
@@ -13,9 +18,11 @@ export type TParams = {
   userId?: string;
 };
 
-export type TResponseData = {
-  data: any;
+export type TResponseData<T> = {
+  data: T;
   message: string;
   params: TParams;
   error: TError[];
 };
+
+export type TLogout = () => void;

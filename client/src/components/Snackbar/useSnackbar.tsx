@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 
 import {
   ESeverity,
@@ -11,11 +11,14 @@ export const useSnackbar = (): IUseSnackbarExpected => {
   const [message, setMessage] = useState<string>('');
   const [severity, setSeverity] = useState<ESeverity>(ESeverity.Success);
 
-  const openSnackbar: TOpenSnackbar = ({ open, message, severity }) => {
-    setOpen(() => open);
-    setMessage(() => message);
-    setSeverity(() => severity);
-  };
+  const openSnackbar: TOpenSnackbar = useCallback(
+    ({ open, message, severity }) => {
+      setOpen(() => open);
+      setMessage(() => message);
+      setSeverity(() => severity);
+    },
+    [],
+  );
 
   const closeSnackbar = () => {
     setOpen(() => false);
