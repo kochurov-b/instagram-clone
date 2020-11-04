@@ -4,7 +4,6 @@ interface IError {
 }
 
 type TParams = {
-  token?: string;
   userId?: number;
 };
 

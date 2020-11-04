@@ -74,7 +74,7 @@ const errorProcessing = <T extends any>({
 export const useFetch = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<Error>(new Error());
-  const { token, logout } = useContext(AuthContext);
+  const { logout } = useContext(AuthContext);
   const { openSnackbar } = useContext(SnackbarContext);
 
   const request = useCallback(
@@ -134,12 +134,9 @@ export const useFetch = () => {
       await request<T>({
         method: ERequestMethod.Get,
         query,
-        headers: {
-          Authorization: `Bearer ${token}`,
-          ...headers,
-        },
+        headers,
       }),
-    [request, token],
+    [request],
   );
 
   return { loading, error, request, get };

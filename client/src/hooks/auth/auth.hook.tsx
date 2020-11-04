@@ -9,12 +9,10 @@ import { EStorageName } from '../../utils/localStorage/localStorage.types';
 import { TLogin, TUseAuthExpected } from './auth.types';
 
 type TUserStorage = {
-  token: string;
   userId: string;
 };
 
 export const useAuth = (): TUseAuthExpected => {
-  const [token, setToken] = useState<string | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
   const [userDataReady, setUserDataReady] = useState<boolean>(false);
 
@@ -22,32 +20,28 @@ export const useAuth = (): TUseAuthExpected => {
     const data = getStorage<TUserStorage>(EStorageName.User);
 
     if (data) {
-      const { token, userId } = data;
+      const { userId } = data;
 
-      setToken(() => token);
       setUserId(() => userId);
     }
 
     setUserDataReady(() => true);
-  }, [setToken, setUserId]);
+  }, [setUserId]);
 
-  const login: TLogin = useCallback((token, userId) => {
-    setToken(() => token);
+  const login: TLogin = useCallback((userId) => {
     setUserId(() => userId);
 
-    setStorage(EStorageName.User, { token, userId });
+    setStorage(EStorageName.User, { userId });
   }, []);
 
   const logout = useCallback(() => {
-    setToken(() => null);
     setUserId(() => null);
 
     removeStorage(EStorageName.User);
   }, []);
 
   return {
-    isAuthenticated: !!token,
-    token,
+    isAuthenticated: !!userId,
     userId,
     userDataReady,
     login,

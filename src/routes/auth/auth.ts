@@ -5,7 +5,7 @@ import { check, validationResult } from 'express-validator';
 
 import { User } from '../../models/User';
 import { generateJsonBody } from '../helpers/jsonBody.helper';
-import { EFormMessage, EStatusCode } from '../helpers/helpers.types';
+import { ECookie, EFormMessage, EStatusCode } from '../helpers/helpers.types';
 import { config } from '../../config/config';
 import { generateErrors } from '../helpers/error.helper';
 import { EAuthMessage } from './auth.types';
@@ -76,28 +76,33 @@ router.post(
       const isMatchPassword = await bcrypt.compare(password, user.password);
       const { jwtSecretKey, jwtTokenLiveTime } = config;
 
-      return isMatchPassword
-        ? res.status(EStatusCode.Ok).json(
-            generateJsonBody({
-              params: {
-                token: generateJwtToken({
-                  encryptedData: user.id,
-                  secretKey: jwtSecretKey,
-                  tokenLiveTime: jwtTokenLiveTime,
-                }),
-                userId: user.id,
-              },
-            }),
-          )
-        : res.status(EStatusCode.BadRequest).json(
-            generateJsonBody({
-              message: EAuthMessage.InvalidLoginOrPassword,
-              error: {
-                name: EAuthMessage.InvalidLoginOrPassword,
-                message: EAuthMessage.InvalidLoginOrPassword,
-              },
-            }),
-          );
+      if (isMatchPassword) {
+        const token = generateJwtToken({
+          encryptedData: user.id,
+          secretKey: jwtSecretKey,
+          tokenLiveTime: jwtTokenLiveTime,
+        });
+
+        res.cookie(ECookie.Token, token, { maxAge: 360000, httpOnly: true });
+
+        return res.status(EStatusCode.Ok).json(
+          generateJsonBody({
+            params: {
+              userId: user.id,
+            },
+          }),
+        );
+      }
+
+      return res.status(EStatusCode.BadRequest).json(
+        generateJsonBody({
+          message: EAuthMessage.InvalidLoginOrPassword,
+          error: {
+            name: EAuthMessage.InvalidLoginOrPassword,
+            message: EAuthMessage.InvalidLoginOrPassword,
+          },
+        }),
+      );
     } catch (error) {
       res.status(EStatusCode.InternalServerError).json(
         generateJsonBody({
@@ -149,7 +154,6 @@ router.post(
         );
       }
 
-      const { jwtSecretKey, jwtTokenLiveTime } = config;
       const hashPassword = await bcrypt.hash(password, 10);
       const userNew = new User({
         email,
@@ -163,13 +167,6 @@ router.post(
       return res.status(EStatusCode.Created).json(
         generateJsonBody({
           message: EAuthMessage.UserCreated,
-          params: {
-            token: generateJwtToken({
-              encryptedData: username,
-              secretKey: jwtSecretKey,
-              tokenLiveTime: jwtTokenLiveTime,
-            }),
-          },
         }),
       );
     } catch (error) {

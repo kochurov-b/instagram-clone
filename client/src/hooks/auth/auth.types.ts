@@ -1,8 +1,7 @@
-export type TLogin = (token: string, userId: string) => void;
+export type TLogin = (userId: string) => void;
 
 export type TUseAuthExpected = {
   userId: string | null;
-  token: string | null;
   userDataReady: boolean;
   isAuthenticated: boolean;
   login: TLogin;

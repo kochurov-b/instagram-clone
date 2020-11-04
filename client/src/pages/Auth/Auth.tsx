@@ -89,11 +89,10 @@ const saveLoginDataToStorage: TSaveLoginDataToStorage = (
   params,
   loginStorage,
 ) => {
-  const token = get(params, 'token', null);
   const userId = get(params, 'userId', null);
 
-  if (token !== null && userId !== null) {
-    loginStorage(token, userId);
+  if (userId !== null) {
+    loginStorage(userId);
   }
 };
 

@@ -14,7 +14,6 @@ type TError = {
 };
 
 export type TParams = {
-  token?: string;
   userId?: string;
 };
 

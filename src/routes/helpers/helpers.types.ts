@@ -15,3 +15,11 @@ export enum EFormMessage {
 export enum ECommonMessage {
   SomethingWontWrong = 'Something wont wrong',
 }
+
+export enum ECookie {
+  Token = 'token',
+}
+
+export type TCookieParser = {
+  [ECookie.Token]?: string;
+};
